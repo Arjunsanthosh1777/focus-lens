@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOCUSLENS</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Top Header -->
+    <header class="header">
+      <div class="brand">
+        <div class="logo-lens">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">FOCUSLENS</span>
+          <span class="brand-tag">SMART FOCUS</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="status-badge" class="status-badge idle">
+          <span class="status-dot"></span>
+          <span id="status-text">Ready</span>
+        </div>
+        <button id="btn-open-options" class="icon-btn" title="Open Full Dashboard" aria-label="Settings and Analytics">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Timer Card -->
+    <section class="timer-section">
+      <div class="timer-circle-wrapper">
+        <svg class="progress-ring" width="200" height="200">
+          <circle class="progress-ring__circle-bg" stroke="rgba(255, 255, 255, 0.06)" stroke-width="8" fill="transparent" r="88" cx="100" cy="100"/>
+          <circle id="progress-circle" class="progress-ring__circle" stroke="#3b82f6" stroke-width="8" stroke-linecap="round" fill="transparent" r="88" cx="100" cy="100"/>
+        </svg>
+        <div class="timer-inner">
+          <span id="session-type-label" class="session-label">FOCUS SESSION</span>
+          <div id="timer-display" class="timer-digits">25:00</div>
+          <span id="timer-subtext" class="timer-subtext">Tap Start to Begin</span>
+        </div>
+      </div>
+
+      <!-- Duration Presets -->
+      <div class="preset-selector" id="preset-selector">
+        <button class="preset-pill active" data-minutes="25">25 min</button>
+        <button class="preset-pill" data-minutes="45">45 min</button>
+        <button class="preset-pill" data-minutes="60">60 min</button>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls-row">
+        <button id="btn-start" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <span>Start Focus</span>
+        </button>
+
+        <div id="active-controls" class="active-controls hidden">
+          <button id="btn-pause" class="btn btn-secondary">
+            <svg id="pause-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+            <span id="pause-text">Pause</span>
+          </button>
+          <button id="btn-reset" class="btn btn-ghost" title="Reset Session">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shield & Distraction Control -->
+    <section class="card shield-card">
+      <div class="shield-info">
+        <div class="shield-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="shield-title">Website Blocker</div>
+          <div class="shield-sub" id="shield-count-text">11 domains restricted</div>
+        </div>
+      </div>
+      <label class="toggle-switch" title="Toggle blocker mode">
+        <input type="checkbox" id="blocker-toggle" checked>
+        <span class="toggle-slider"></span>
+      </label>
+    </section>
+
+    <!-- Today's Stats Snapshot -->
+    <section class="stats-section">
+      <div class="stats-title-row">
+        <span>TODAY'S SUMMARY</span>
+        <span id="current-date-label">Today</span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-val" id="stat-focus-time">0m</div>
+          <div class="stat-label">Focus Time</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-sessions">0</div>
+          <div class="stat-label">Sessions</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-val" id="stat-blocked">0</div>
+          <div class="stat-label">Blocked</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <button id="btn-full-report" class="btn-dashboard-link">
+        <span>View Detailed Analytics & Settings</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

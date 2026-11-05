@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOCUSLENS – Dashboard & Settings</title>
+  <style>
+    :root {
+      --bg-base: #080c14;
+      --bg-sidebar: #0d1322;
+      --bg-surface: #111a2e;
+      --bg-surface-elevated: #16223d;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(59, 130, 246, 0.3);
+
+      --blue-600: #2563eb;
+      --blue-500: #3b82f6;
+      --blue-400: #60a5fa;
+      --cyan-400: #38bdf8;
+      --emerald-500: #10b981;
+      --amber-500: #f59e0b;
+      --rose-500: #f43f5e;
+
+      --text-100: #f8fafc;
+      --text-300: #cbd5e1;
+      --text-400: #94a3b8;
+      --text-500: #64748b;
+
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-100);
+      font-family: var(--font-sans);
+      display: flex;
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Layout */
+    .app-sidebar {
+      width: 260px;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      padding: 28px 18px;
+      flex-shrink: 0;
+    }
+
+    .brand-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: rgba(37, 99, 235, 0.15);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #ffffff;
+    }
+
+    .brand-subtitle {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--cyan-400);
+    }
+
+    .nav-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: var(--text-400);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-100);
+    }
+
+    .nav-item.active {
+      background: rgba(37, 99, 235, 0.15);
+      border-color: rgba(59, 130, 246, 0.35);
+      color: var(--blue-400);
+    }
+
+    .nav-item svg {
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 11px;
+      color: var(--text-500);
+    }
+
+    /* Content Area */
+    .app-main {
+      flex: 1;
+      padding: 36px 44px;
+      overflow-y: auto;
+      max-width: 1100px;
+    }
+
+    .page-section {
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    .page-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--text-400);
+    }
+
+    /* Metrics Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--blue-600), transparent);
+    }
+
+    .metric-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-400);
+      text-transform: uppercase;
+    }
+
+    .metric-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(37, 99, 235, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue-400);
+    }
+
+    .metric-val {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #ffffff;
+    }
+
+    .metric-sub {
+      font-size: 12px;
+      color: var(--text-500);
+    }
+
+    /* Dashboard Cards */
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-desc {
+      font-size: 13px;
+      color: var(--text-400);
+      margin-bottom: 20px;
+    }
+
+    /* Site Usage Bars */
+    .usage-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .usage-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .usage-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .usage-domain {
+      font-weight: 600;
+      color: var(--text-300);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .usage-time {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--cyan-400);
+      font-size: 12px;
+    }
+
+    .usage-bar-track {
+      height: 7px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .usage-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--blue-600), var(--cyan-400));
+      transition: width 0.4s ease;
+    }
+
+    .empty-placeholder {
+      text-align: center;
+      padding: 32px 16px;
+      color: var(--text-500);
+      font-size: 13px;
+      border: 1px dashed var(--border-subtle);
+      border-radius: 12px;
+    }
+
+    /* 7-Day History Table */
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .history-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-500);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .history-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-300);
+    }
+
+    .history-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-today {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 9999px;
+      background: rgba(37, 99, 235, 0.2);
+      color: var(--blue-400);
+      margin-left: 6px;
+    }
+
+    /* Website Blocker Form & List */
+    .blocker-input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .input-text {
+      flex: 1;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: #ffffff;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .input-text:focus {
+      border-color: var(--blue-500);
+      box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--blue-600);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--blue-500);
+    }
+
+    .btn-secondary {
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-300);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--rose-500);
+    }
+
+    .btn-danger:hover {
+      background: rgba(244, 63, 94, 0.25);
+    }
+
+    .preset-pills-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+      align-items: center;
+    }
+
+    .preset-pill-label {
+      font-size: 12px;
+      color: var(--text-500);
+      margin-right: 4px;
+    }
+
+    .pill-quick-add {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 5px 12px;
+      font-size: 12px;
+      color: var(--text-400);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .pill-quick-add:hover {
+      background: rgba(37, 99, 235, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: var(--blue-400);
+    }
+
+    .domains-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 10px;
+    }
+
+    .domain-tag {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-surface-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-300);
+    }
+
+    .domain-tag span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .domain-remove-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-500);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s ease;
+    }
+
+    .domain-remove-btn:hover {
+      color: var(--rose-500);
+    }
+
+    /* Radio / Settings Options */
+    .mode-select-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .mode-option-card {
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-surface-elevated);
+    }
+
+    .mode-option-card.selected {
+      border-color: var(--blue-500);
+      background: rgba(37, 99, 235, 0.1);
+    }
+
+    .mode-option-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .mode-option-desc {
+      font-size: 12px;
+      color: var(--text-400);
+    }
+
+    /* Switch Option Row */
+    .switch-option {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .switch-option:last-child {
+      border-bottom: none;
+    }
+
+    .switch-meta {
+      max-width: 80%;
+    }
+
+    .switch-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 3px;
+    }
+
+    .switch-desc {
+      font-size: 12px;
+      color: var(--text-400);
+    }
+
+    /* Toggle switch */
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #334155;
+      transition: .25s ease;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .25s ease;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--blue-600);
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px);
+    }
+
+    /* Toast Notification */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #1e293b;
+      border: 1px solid var(--border-accent);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+
+    #toast-msg.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="app-sidebar">
+    <div class="brand-header">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="6"></circle>
+          <circle cx="12" cy="12" r="2"></circle>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">FOCUSLENS</div>
+        <div class="brand-subtitle">DASHBOARD & SETTINGS</div>
+      </div>
+    </div>
+
+    <nav class="nav-menu">
+      <button class="nav-item active" data-tab="analytics">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span>Focus Analytics</span>
+      </button>
+
+      <button class="nav-item" data-tab="blocker">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        </svg>
+        <span>Website Blocker</span>
+      </button>
+
+      <button class="nav-item" data-tab="youtube">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path>
+          <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"></polygon>
+        </svg>
+        <span>YouTube Shield</span>
+      </button>
+
+      <button class="nav-item" data-tab="settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Preferences</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div>FOCUSLENS v1.0.0</div>
+      <div>Stored locally via Chrome Storage</div>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="app-main">
+
+    <!-- TAB 1: FOCUS ANALYTICS & DAILY REPORT -->
+    <section id="section-analytics" class="page-section active">
+      <div class="section-header">
+        <h1 class="section-title">Focus Analytics & Daily Report</h1>
+        <p class="section-desc">Track your daily deep work achievements and monitor active website usage.</p>
+      </div>
+
+      <!-- Top Summary Metrics -->
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Today's Focus Time</span>
+            <div class="metric-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-val" id="dash-focus-time">0m</div>
+          <div class="metric-sub">Dedicated work intervals</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Completed Sessions</span>
+            <div class="metric-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+          </div>
+          <div class="metric-val" id="dash-sessions-count">0</div>
+          <div class="metric-sub">Full timer cycles completed</div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-top">
+            <span class="metric-label">Distractions Blocked</span>
+            <div class="metric-icon-box">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+          </div>
+          <div class="metric-val" id="dash-blocked-count">0</div>
+          <div class="metric-sub">Interventions prevented</div>
+        </div>
+      </div>
+
+      <!-- Active Website Browsing Breakdown -->
+      <div class="panel-card">
+        <h2 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+          Active Browsing Time Today
+        </h2>
+        <p class="panel-desc">Real-time measurement of tab engagement across active browser domains.</p>
+        <div id="usage-list" class="usage-list">
+          <!-- Injected via JavaScript -->
+          <div class="empty-placeholder">Browsing activity will be recorded here as you navigate websites.</div>
+        </div>
+      </div>
+
+      <!-- 7-Day Focus History -->
+      <div class="panel-card">
+        <h2 class="panel-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          Recent Focus History
+        </h2>
+        <p class="panel-desc">Summary of focus sessions and blocked distractions over the last 7 days.</p>
+        <div style="overflow-x: auto;">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Focus Time</th>
+                <th>Completed Sessions</th>
+                <th>Distractions Blocked</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <!-- Injected via JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: WEBSITE BLOCKER -->
+    <section id="section-blocker" class="page-section">
+      <div class="section-header">
+        <h1 class="section-title">Website Blocker</h1>
+        <p class="section-desc">Manage the domain blocklist to keep high-distraction platforms out of sight.</p>
+      </div>
+
+      <!-- Blocking Strategy -->
+      <div class="panel-card">
+        <h2 class="panel-title">Blocker Behavior</h2>
+        <p class="panel-desc">Choose when restricted domains should be intercepted.</p>
+        <div class="mode-select-grid">
+          <div class="mode-option-card" id="mode-focus-only">
+            <div class="mode-option-title">During Focus Sessions Only (Recommended)</div>
+            <div class="mode-option-desc">Websites are blocked strictly while a 25/45/60 min focus timer is running. Access returns during breaks.</div>
+          </div>
+          <div class="mode-option-card" id="mode-always">
+            <div class="mode-option-title">Always Block Restricted Sites</div>
+            <div class="mode-option-desc">Continuous distraction-free barrier. Restricted sites cannot be accessed at any time.</div>
+          </div>
+          <div class="mode-option-card" id="mode-off">
+            <div class="mode-option-title">Blocker Disabled</div>
+            <div class="mode-option-desc">Temporarily pause all website interception rules without deleting your domain list.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Domain & Presets -->
+      <div class="panel-card">
+        <h2 class="panel-title">Restricted Domains</h2>
+        <p class="panel-desc">Type any domain or choose a preset category to add it to your restricted list.</p>
+
+        <form id="form-add-domain" class="blocker-input-row">
+          <input type="text" id="input-new-domain" class="input-text" placeholder="e.g. twitter.com, reddit.com, or netflix.com" required>
+          <button type="submit" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Add Domain
+          </button>
+        </form>
+
+        <div class="preset-pills-row">
+          <span class="preset-pill-label">Quick Add Packs:</span>
+          <button class="pill-quick-add" data-pack="social">+ Social Media (Twitter, IG, Reddit, TikTok)</button>
+          <button class="pill-quick-add" data-pack="entertainment">+ Entertainment (Netflix, Twitch, Disney+)</button>
+          <button class="pill-quick-add" data-pack="news">+ News (CNN, BBC, BuzzFeed)</button>
+        </div>
+
+        <div id="domains-grid" class="domains-grid">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: YOUTUBE FOCUS SHIELD -->
+    <section id="section-youtube" class="page-section">
+      <div class="section-header">
+        <h1 class="section-title">YouTube Focus Mode</h1>
+        <p class="section-desc">Strip out algorithmic hooks, infinite feeds, and autoplay rabbit holes so you can use YouTube purely for study, research, and work.</p>
+      </div>
+
+      <div class="panel-card">
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Enable YouTube Distraction Shield</div>
+            <div class="switch-desc">Master switch to activate FocusLens content rules on all YouTube pages.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="yt-master-toggle" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Hide YouTube Shorts</div>
+            <div class="switch-desc">Completely removes the Shorts sidebar navigation button, homepage reels shelves, channel tabs, and redirects /shorts/ to subscriptions.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="yt-hide-shorts" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Hide Homepage Recommendations</div>
+            <div class="switch-desc">Replaces the infinite clickbait home feed with a calm, purposeful FocusLens search slate.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="yt-hide-recommendations" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Hide Watch Page Sidebar ("Up Next" / Related Videos)</div>
+            <div class="switch-desc">Eliminates distracting video recommendations beside playing videos, giving you a wider, cinema-style learning experience.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="yt-hide-sidebar" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Hide Comments Section</div>
+            <div class="switch-desc">Hides comment threads below videos to avoid argumentative or attention-draining discussions.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="yt-hide-comments" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: PREFERENCES & DATA -->
+    <section id="section-settings" class="page-section">
+      <div class="section-header">
+        <h1 class="section-title">Focus Settings & Preferences</h1>
+        <p class="section-desc">Customize default timer durations, notification alerts, and local data storage.</p>
+      </div>
+
+      <div class="panel-card">
+        <h2 class="panel-title">Session Notifications</h2>
+        <p class="panel-desc">Configure system alerts when timer sessions conclude.</p>
+
+        <div class="switch-option">
+          <div class="switch-meta">
+            <div class="switch-title">Desktop Notifications</div>
+            <div class="switch-desc">Receive a system alert via chrome.notifications when your focus interval is completed.</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="pref-notifications" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2 class="panel-title">Local Storage & Privacy</h2>
+        <p class="panel-desc">All FocusLens preferences and daily metrics are saved exclusively on your local machine using Chrome Storage API. No telemetry or external server tracking.</p>
+
+        <div style="display: flex; gap: 12px; margin-top: 14px;">
+          <button id="btn-export-data" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Export Data as JSON
+          </button>
+          <button id="btn-reset-data" class="btn btn-danger">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            Clear All History & Stats
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="toast-msg">Settings updated successfully</div>
+
+  <script src="options.js"></script>
+</body>
+</html>
